@@ -1,11 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Subset_Sum
@@ -19,34 +13,48 @@ namespace Subset_Sum
 
         private void Process_Click(object sender, EventArgs e)
         {
-            List<double> values = new List<double>();
+            List<int> values = new List<int>();
 
-            double tmp;
+            int tmp;
 
-            int i = 0;
             foreach (string line in this.Values.Lines)
             {
-                if (!Double.TryParse(line, out tmp))
+                if (!Int32.TryParse(line, out tmp))
                 {
                     MessageBox.Show("Value '" + line + "' is not a valid number!");
                     return;
                 }
                 else if (line.Length != 0)
                 {
-                    values.Add(Double.Parse(line));
+                    values.Add(Int32.Parse(line));
                 }
 
             }
 
-            SubsetSum sum = new SubsetSum(values);
-
-            double desiredResult;
-            if (!Double.TryParse(this.DesiredResult.Text, out desiredResult))
+            int desiredResult;
+            if (!Int32.TryParse(this.DesiredResult.Text, out desiredResult))
             {
                 MessageBox.Show("Desired result of '" + this.DesiredResult.Text + "' is not a valid number!");
             }
 
-            sum.getPossibilities(desiredResult);
+            List<List<int>> results = SubsetSum.findSubsets(desiredResult, values.ToArray());
+
+            foreach (List<int> result in results)
+            {
+                this.Results.AppendText("[");
+                int i = 1;
+                foreach (int item in result)
+                {
+                    this.Results.AppendText(item.ToString());
+                    if (i < result.Count)
+                    {
+                        this.Results.AppendText(", ");
+                    }
+                    i++;
+                }
+                this.Results.AppendText("] = " + desiredResult.ToString() + System.Environment.NewLine);
+                this.Refresh();
+            }
         }
     }
 }
